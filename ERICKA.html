@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up and Login</title>
+    <style>
+        /* General reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        .container {
+            background-color: palevioletred;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #333;
+            text-align: left;
+        }
+
+        input {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: black;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: pink;
+        }
+
+        .dashboard {
+            display: none; /* Initially hidden */
+            padding: 20px;
+        }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+
+        .switch {
+            margin-top: 10px;
+            cursor: pointer;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="authBox">
+        <h2 id="formTitle">Sign Up</h2>
+        <form id="authForm">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Sign Up</button>
+            <div class="error" id="errorMessage"></div>
+        </form>
+        <div class="switch" id="switchToLogin">Already have an account? Log In</div>
+    </div>
+
+    <div class="container dashboard" id="dashBox">
+        <h2>Welcome to the Dashboard</h2>
+        <p>This is your dashboard after logging in successfully.</p>
+        <button onclick="logOut()">Log Out</button>
+    </div>
+
+    <script>
+        const authForm = document.getElementById('authForm');
+        const authBox = document.getElementById('authBox');
+        const dashBox = document.getElementById('dashBox');
+        const errorMessage = document.getElementById('errorMessage');
+        const switchToLogin = document.getElementById('switchToLogin');
+
+        // Store user credentials (for demonstration purposes)
+        const users = {};
+
+        let isLoginMode = false; // Flag to track login/signup mode
+
+        authForm.addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form from submitting
+
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (isLoginMode) {
+                // Login logic
+                if (users[username] && users[username] === password) {
+                    authBox.style.display = 'none';
+                    dashBox.style.display = 'block';
+                    errorMessage.textContent = ''; // Clear any previous error messages
+                } else {
+                    errorMessage.textContent = 'Incorrect username or password. Try again.';
+                }
+            } else {
+                // Sign-up logic
+                if (users[username]) {
+                    errorMessage.textContent = 'Username already exists. Please choose another.';
+                } else {
+                    users[username] = password; // Store the new user
+                    alert('Sign up successful! You can now log in.');
+                    switchMode(); // Switch to login mode
+                }
+            }
+        });
+
+        switchToLogin.addEventListener('click', switchMode);
+
+        function switchMode() {
+            isLoginMode = !isLoginMode; // Toggle between login and signup
+            authForm.reset(); // Reset the form
+            errorMessage.textContent = ''; // Clear error messages
+
+            if (isLoginMode) {
+                document.getElementById('formTitle').textContent = 'Log In';
+                switchToLogin.textContent = 'Don\'t have an account? Sign Up';
+                authForm.querySelector('button').textContent = 'Log In';
+            } else {
+                document.getElementById('formTitle').textContent = 'Sign Up';
+                switchToLogin.textContent = 'Already have an account? Log In';
+                authForm.querySelector('button').textContent = 'Sign Up';
+            }
+        }
+
+        function logOut() {
+            // Show the login/signup form and hide the dashboard
+            authBox.style.display = 'block';
+            dashBox.style.display = 'none';
+            // Optionally clear input fields
+            authForm.reset();
+        }
+    </script>
+
+</body>
+</html>
